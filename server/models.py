@@ -12,6 +12,8 @@ db = SQLAlchemy(metadata=metadata)
 class Bakery(db.Model, SerializerMixin):
     __tablename__ = 'bakeries'
 
+    serialize_rules = ('-baked_goods.bakery',)
+
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
     created_at = db.Column(db.DateTime, default=datetime.utcnow, nullable=False)
@@ -27,9 +29,13 @@ class Bakery(db.Model, SerializerMixin):
             'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S') if self.updated_at else None,
         }
 
+    def __repr__(self):
+        return f'<Bakery {self.name}>'
 
 class BakedGood(db.Model, SerializerMixin):
     __tablename__ = 'baked_goods'
+
+    serialize_rules = ('-bakery.baked_goods',)
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String, nullable=False)
@@ -49,3 +55,6 @@ class BakedGood(db.Model, SerializerMixin):
             'updated_at': self.updated_at.strftime('%Y-%m-%d %H:%M:%S') if self.updated_at else None,
             'bakery_id': self.bakery_id
         }
+    
+    def __repr__(self):
+        return f'<Baked Good {self.name}, ${self.price}>'
